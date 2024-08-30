@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import Logo from "../logo.png";
+import { Link, useNavigate } from "react-router-dom";
 
 const items = [
   {
@@ -72,13 +73,51 @@ const items = [
       },
     ],
   },
+  {
+    key: "sub5",
+    label: "Rút tiền",
+    icon: <HistoryOutlined />,
+  },
 ];
 const SideBar = () => {
   const [current, setCurrent] = useState("1");
+  const navigate = useNavigate();
 
   const onClick = (e) => {
     console.log("click ", e);
     setCurrent(e.key);
+    switch (e.key) {
+      case "sub1":
+        navigate("/dashboard");
+        break;
+      case "1":
+        navigate("/po_account");
+        break;
+      case "2":
+        navigate("/sm_account");
+        break;
+      case "sub3":
+        navigate("/support");
+        break;
+      case "3":
+        navigate("/list_category");
+        break;
+      case "4":
+        navigate("/add_category");
+        break;
+      case "5":
+        navigate("/wd_history");
+        break;
+      case "6":
+        navigate("/rc_history");
+        break;
+      case "7":
+        navigate("/rp_history");
+        break;
+      case "8":
+        navigate("/ot_history");
+        break;
+    }
   };
   return (
     <>
