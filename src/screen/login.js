@@ -74,10 +74,10 @@ export default function Login() {
     <>
       {contextHolder}
       <div class="bg-gray-100 flex justify-evenly items-center h-screen">
-        <div class="w-1/2 h-screen hidden lg:block">
+        <div class="w-1/2 h-screen lg:block">
           <img
             src="https://i.pinimg.com/564x/99/e2/f8/99e2f879f7823d32ce100075290e674c.jpg"
-            alt="Placeholder"
+            alt="BgIMG"
             class="object-contain w-full h-full"
           />
         </div>
