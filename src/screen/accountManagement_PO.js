@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Pagination } from "antd";
+import { Button, Input, Space, Table, Pagination, Tag } from "antd";
 import Highlighter from "react-highlight-words";
 
 import SideBar from "../component/sidebar";
@@ -10,46 +10,103 @@ const data = [
     key: "1",
     name: "Nguyễn Thị Bích Phượng",
     age: 32,
+    startDate: "24-07-2024",
+    status: ["tốt"],
+
     address: "New York No. 1 Lake Park",
+    username: "username123",
   },
   {
     key: "2",
     name: "Mai Văn Tiến Hoàng Đạt",
     age: 42,
+    startDate: "24-07-2024",
+    status: ["tốt"],
+
     address: "London No. 1 Lake Park",
+    username: "username123",
   },
   {
     key: "3",
     name: "Lê Hiếu Nghĩa Đệ Nhất Thương Tâm Nhàn",
     age: 32,
+    startDate: "20-04-2024",
+    status: ["tốt"],
+
     address: "Sydney No. 1 Lake Park",
+    username: "username123",
   },
   {
     key: "4",
     name: "Ngô Tiến Đạt",
     age: 32,
+    startDate: "24-03-2024",
+    status: ["tốt"],
+
     address: "London No. 2 Lake Park",
+    username: "username123",
   },
   {
     key: "5",
     name: "Ngô Tiến Đạt",
     age: 32,
+    startDate: "24-01-2024",
+    status: ["tốt"],
+
     address: "London No. 2 Lake Park",
+    username: "username123",
   },
   {
     key: "6",
     name: "Ngô Tiến Đạt",
     age: 32,
+    startDate: "21-02-2024",
+    status: ["vi phạm"],
+
     address: "London No. 2 Lake Park",
+    username: "username123",
   },
   {
     key: "7",
     name: "Ngô Tiến Đạt",
     age: 32,
+    startDate: "04-07-2024",
+    status: ["cảnh cáo"],
+
     address: "London No. 2 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "8",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "24-07-2023",
+    status: ["cảnh cáo"],
+
+    address: "London No. 2 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "9",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "24-06-2024",
+    status: ["tốt"],
+
+    username: "username123",
+  },
+  {
+    key: "10",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "20-07-2024",
+    status: ["cảnh cáo"],
+    username: "abcFulfypaw1231231",
   },
 ];
 export default function AccountManagement_PO() {
+  const [sortedInfo, setSortedInfo] = useState({});
+
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
@@ -173,38 +230,81 @@ export default function AccountManagement_PO() {
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "Tài khoản",
+      dataIndex: "username",
+      key: "username",
       width: "20%",
-      ...getColumnSearchProps("age"),
+      ...getColumnSearchProps("username"),
     },
     {
       title: "Ngày tham gia",
       dataIndex: "startDate",
       key: "startDate",
-      ...getColumnSearchProps("address"),
-      sorter: (a, b) => a.address.length - b.address.length,
-      sortDirections: ["descend", "ascend"],
+      width: "14%",
+
+      ...getColumnSearchProps("startDate"),
+    },
+
+    {
+      title: "Tình trạng",
+      key: "status",
+      dataIndex: "status",
+      width: "12%",
+      render: (_, { status }) => (
+        <>
+          {status.map((tag) => {
+            let color;
+            switch (tag) {
+              case "tốt":
+                color = "blue";
+                break;
+              case "cảnh cáo":
+                color = "orange";
+                break;
+
+              case "vi phạm":
+                color = "red";
+                break;
+            }
+            return (
+              <Tag color={color} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+      filters: [
+        {
+          text: "Tốt",
+          value: "tốt",
+        },
+        {
+          text: "Cảnh cáo",
+          value: "cảnh cáo",
+        },
+        {
+          text: "Vi phạm",
+          value: "vi phạm",
+        },
+      ],
+      onFilter: (value, record) => record.status.indexOf(value) === 0,
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      ...getColumnSearchProps("address"),
-      sorter: (a, b) => a.address.length - b.address.length,
-      sortDirections: ["descend", "ascend"],
+      title: "Cấm hoạt động",
+      width: 140,
+      render: () => <Button type="primary">Chi tiết</Button>,
     },
     {
       title: "Gửi cảnh cáo",
       fixed: "right",
       width: 120,
-      render: () => <a>action</a>,
+      render: () => <Button>Cảnh cáo</Button>,
     },
     {
       title: "Cấm hoạt động",
       width: 140,
-      render: () => <a>action</a>,
+      render: () => <Button>Khóa tài khoản</Button>,
     },
   ];
   return (
@@ -224,7 +324,7 @@ export default function AccountManagement_PO() {
             <Table
               columns={columns}
               dataSource={data}
-              pagination={{ pageSize: 5 }}
+              pagination={{ pageSize: 7 }}
             />
           </div>
         </div>
