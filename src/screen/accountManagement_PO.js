@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Pagination, Tag } from "antd";
+import { Button, Input, Space, Table, Modal, Tag } from "antd";
 import Highlighter from "react-highlight-words";
 
 import SideBar from "../component/sidebar";
@@ -105,7 +105,16 @@ const data = [
   },
 ];
 export default function AccountManagement_PO() {
-  const [sortedInfo, setSortedInfo] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -291,9 +300,13 @@ export default function AccountManagement_PO() {
       onFilter: (value, record) => record.status.indexOf(value) === 0,
     },
     {
-      title: "Cấm hoạt động",
+      title: "Thông tin",
       width: 140,
-      render: () => <Button type="primary">Chi tiết</Button>,
+      render: () => (
+        <Button type="primary" onClick={showModal}>
+          Chi tiết
+        </Button>
+      ),
     },
     {
       title: "Gửi cảnh cáo",
@@ -329,6 +342,17 @@ export default function AccountManagement_PO() {
           </div>
         </div>
       </div>
+      {/* MODAL DETAIL PET OWNER */}
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
     </div>
   );
 }
