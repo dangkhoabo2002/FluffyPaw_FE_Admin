@@ -4,10 +4,11 @@ import {
   UserOutlined,
   TagOutlined,
   BarChartOutlined,
+  DollarOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import Logo from "../logo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const items = [
   {
@@ -76,7 +77,7 @@ const items = [
   {
     key: "sub5",
     label: "Rút tiền",
-    icon: <HistoryOutlined />,
+    icon: <DollarOutlined />,
   },
 ];
 const SideBar = () => {
@@ -115,7 +116,7 @@ const SideBar = () => {
         navigate("/rp_history");
         break;
       case "8":
-        navigate("/ot_history");
+        navigate("/wd_request");
         break;
     }
   };
