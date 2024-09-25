@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, notification } from "antd";
+import { Input, notification, Button } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -30,6 +30,9 @@ export default function Login() {
     }
   };
 
+  // LOGIN
+
+  const [isLoading, setIsLoading] = useState(false);
   const [login, setLogin] = useState({
     user_username: "",
     user_password: "",
@@ -41,6 +44,7 @@ export default function Login() {
   };
 
   const handleLogin = (us, pw) => {
+    setIsLoading(true);
     if (
       us === null ||
       us === "" ||
@@ -50,6 +54,7 @@ export default function Login() {
       pw === undefined
     ) {
       openNotificationWithIcon("warning");
+      setIsLoading(false);
     } else {
       axios
         .post("https://fluffypaw.azurewebsites.net/api/Authentication/Login", {
@@ -59,14 +64,17 @@ export default function Login() {
         .then((response) => {
           if (response.status === 200) {
             const dataLog = response.data;
-            console.log(dataLog.data.token);
-            sessionStorage.setItem("access_token", dataLog.data.token);
+            console.log(dataLog.data);
+            localStorage.setItem("admin_access_token", dataLog.data);
+            sessionStorage.setItem("admin_access_token", dataLog.data);
             navigate("/dashboard");
+            setIsLoading(false);
           }
         })
 
         .catch((error) => {
           console.error(error);
+          setIsLoading(false);
         });
     }
   };
@@ -109,14 +117,33 @@ export default function Login() {
             />
           </div>
 
-          <button
-            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
-            onClick={() =>
-              handleLogin(login.user_username, login.user_password)
-            }
-          >
-            Login
-          </button>
+          {isLoading === true ? (
+            <>
+              <Button
+                type="primary"
+                loading
+                className="w-full"
+                onClick={() =>
+                  handleLogin(login.user_username, login.user_password)
+                }
+              >
+                Đăng nhập
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                type="primary"
+                className="w-full"
+                iconPosition={"start"}
+                onClick={() =>
+                  handleLogin(login.user_username, login.user_password)
+                }
+              >
+                Đăng nhập
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </>

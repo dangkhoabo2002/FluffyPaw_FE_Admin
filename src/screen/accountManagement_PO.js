@@ -1,109 +1,110 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table, Modal, Tag } from "antd";
+import axios from "axios";
 import Highlighter from "react-highlight-words";
 
 import SideBar from "../component/sidebar";
 
-const data = [
-  {
-    key: "1",
-    name: "Nguyễn Thị Bích Phượng",
-    age: 32,
-    startDate: "24-07-2024",
-    status: ["tốt"],
+// const data = [
+//   {
+//     key: "1",
+//     name: "Nguyễn Thị Bích Phượng",
+//     age: 32,
+//     startDate: "24-07-2024",
+//     status: ["tốt"],
 
-    address: "New York No. 1 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "2",
-    name: "Mai Văn Tiến Hoàng Đạt",
-    age: 42,
-    startDate: "24-07-2024",
-    status: ["tốt"],
+//     address: "New York No. 1 Lake Park",
+//     username: "username123",
+//   },
+//   {
+//     key: "2",
+//     name: "Mai Văn Tiến Hoàng Đạt",
+//     age: 42,
+//     startDate: "24-07-2024",
+//     status: ["tốt"],
 
-    address: "London No. 1 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "3",
-    name: "Lê Hiếu Nghĩa Đệ Nhất Thương Tâm Nhàn",
-    age: 32,
-    startDate: "20-04-2024",
-    status: ["tốt"],
+//     address: "London No. 1 Lake Park",
+//     username: "username123",
+//   },
+//   {
+//     key: "3",
+//     name: "Lê Hiếu Nghĩa Đệ Nhất Thương Tâm Nhàn",
+//     age: 32,
+//     startDate: "20-04-2024",
+//     status: ["tốt"],
 
-    address: "Sydney No. 1 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "4",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "24-03-2024",
-    status: ["tốt"],
+//     address: "Sydney No. 1 Lake Park",
+//     username: "username123",
+//   },
+//   {
+//     key: "4",
+//     name: "Ngô Tiến Đạt",
+//     age: 32,
+//     startDate: "24-03-2024",
+//     status: ["tốt"],
 
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "5",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "24-01-2024",
-    status: ["tốt"],
+//     address: "London No. 2 Lake Park",
+//     username: "username123",
+//   },
+//   {
+//     key: "5",
+//     name: "Ngô Tiến Đạt",
+//     age: 32,
+//     startDate: "24-01-2024",
+//     status: ["tốt"],
 
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "6",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "21-02-2024",
-    status: ["vi phạm"],
+//     address: "London No. 2 Lake Park",
+//     username: "username123",
+//   },
+//   {
+//     key: "6",
+//     name: "Ngô Tiến Đạt",
+//     age: 32,
+//     startDate: "21-02-2024",
+//     status: ["vi phạm"],
 
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "7",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "04-07-2024",
-    status: ["cảnh cáo"],
+//     address: "London No. 2 Lake Park",
+//     username: "username123",
+//   },
+//   {
+//     key: "7",
+//     name: "Ngô Tiến Đạt",
+//     age: 32,
+//     startDate: "04-07-2024",
+//     status: ["cảnh cáo"],
 
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "8",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "24-07-2023",
-    status: ["cảnh cáo"],
+//     address: "London No. 2 Lake Park",
+//     username: "username123",
+//   },
+//   {
+//     key: "8",
+//     name: "Ngô Tiến Đạt",
+//     age: 32,
+//     startDate: "24-07-2023",
+//     status: ["cảnh cáo"],
 
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "9",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "24-06-2024",
-    status: ["tốt"],
+//     address: "London No. 2 Lake Park",
+//     username: "username123",
+//   },
+//   {
+//     key: "9",
+//     name: "Ngô Tiến Đạt",
+//     age: 32,
+//     startDate: "24-06-2024",
+//     status: ["tốt"],
 
-    username: "username123",
-  },
-  {
-    key: "10",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "20-07-2024",
-    status: ["cảnh cáo"],
-    username: "abcFulfypaw1231231",
-  },
-];
+//     username: "username123",
+//   },
+//   {
+//     key: "10",
+//     name: "Ngô Tiến Đạt",
+//     age: 32,
+//     startDate: "20-07-2024",
+//     status: ["cảnh cáo"],
+//     username: "abcFulfypaw1231231",
+//   },
+// ];
 export default function AccountManagement_PO() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -233,10 +234,10 @@ export default function AccountManagement_PO() {
   const columns = [
     {
       title: "Tên",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "fullName",
+      key: "fullName",
       width: "26%",
-      ...getColumnSearchProps("name"),
+      ...getColumnSearchProps("fullName"),
     },
     {
       title: "Tài khoản",
@@ -259,30 +260,7 @@ export default function AccountManagement_PO() {
       key: "status",
       dataIndex: "status",
       width: "12%",
-      render: (_, { status }) => (
-        <>
-          {status.map((tag) => {
-            let color;
-            switch (tag) {
-              case "tốt":
-                color = "blue";
-                break;
-              case "cảnh cáo":
-                color = "orange";
-                break;
 
-              case "vi phạm":
-                color = "red";
-                break;
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
       filters: [
         {
           text: "Tốt",
@@ -320,6 +298,32 @@ export default function AccountManagement_PO() {
       render: () => <Button>Khóa tài khoản</Button>,
     },
   ];
+
+  // GET SM ACCOUNT
+  const [loading, setLoading] = useState(false);
+  const [poAccounts, setPoAccounts] = useState();
+  const handleGetPO = async () => {
+    try {
+      const response = await axios.get(
+        "https://fluffypaw.azurewebsites.net/api/Admin/GetPetOwners",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "admin_access_token"
+            )}`,
+          },
+        }
+      );
+      setPoAccounts(response.data.data.result);
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    handleGetPO();
+  }, []);
   return (
     <div>
       <div className="flex flex-row h-screen">
@@ -334,9 +338,12 @@ export default function AccountManagement_PO() {
               boxShadow: "0px 8px 13px -3px rgba(0, 0, 0, .07)",
             }}
           >
+            <button onClick={() => console.log(poAccounts)}>LCICKK</button>
+            <button onClick={() => handleGetPO()}>GetAlla</button>
+
             <Table
               columns={columns}
-              dataSource={data}
+              dataSource={poAccounts}
               pagination={{ pageSize: 7 }}
             />
           </div>

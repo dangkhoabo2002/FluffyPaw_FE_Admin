@@ -75,7 +75,7 @@ const items = [
     ],
   },
   {
-    key: "sub5",
+    key: "sub6",
     label: "Rút tiền",
     icon: <DollarOutlined />,
   },
@@ -120,6 +120,13 @@ const SideBar = () => {
         break;
     }
   };
+
+  // LOGOUT
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate(`/`);
+  };
   return (
     <>
       <div className="flex flex-col bg-[#001529] text-white h-full">
@@ -141,6 +148,7 @@ const SideBar = () => {
           mode="inline"
           items={items}
         />
+        <button onClick={handleLogout}>Đăng xuất</button>
       </div>
     </>
   );
