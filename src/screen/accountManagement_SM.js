@@ -1,112 +1,26 @@
-import React, { useRef, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Modal, Tag } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { SearchOutlined, AlignLeftOutlined } from "@ant-design/icons";
+import { Button, Input, Space, Table, Dropdown, Modal, Tag } from "antd";
+import axios from "axios";
 import Highlighter from "react-highlight-words";
 
 import SideBar from "../component/sidebar";
 
-const data = [
+const items = [
   {
     key: "1",
-    name: "Nguyễn Thị Bích Phượng",
-    age: 32,
-    startDate: "24-07-2024",
-    status: ["tốt"],
-
-    address: "New York No. 1 Lake Park",
-    username: "username123",
+    label: <button>Cảnh cáo</button>,
   },
   {
     key: "2",
-    name: "Mai Văn Tiến Hoàng Đạt",
-    age: 42,
-    startDate: "24-07-2024",
-    status: ["tốt"],
-
-    address: "London No. 1 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "3",
-    name: "Lê Hiếu Nghĩa Đệ Nhất Thương Tâm Nhàn",
-    age: 32,
-    startDate: "20-04-2024",
-    status: ["tốt"],
-
-    address: "Sydney No. 1 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "4",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "24-03-2024",
-    status: ["tốt"],
-
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "5",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "24-01-2024",
-    status: ["tốt"],
-
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "6",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "21-02-2024",
-    status: ["vi phạm"],
-
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "7",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "04-07-2024",
-    status: ["cảnh cáo"],
-
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "8",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "24-07-2023",
-    status: ["cảnh cáo"],
-
-    address: "London No. 2 Lake Park",
-    username: "username123",
-  },
-  {
-    key: "9",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "24-06-2024",
-    status: ["tốt"],
-
-    username: "username123",
-  },
-  {
-    key: "10",
-    name: "Ngô Tiến Đạt",
-    age: 32,
-    startDate: "20-07-2024",
-    status: ["cảnh cáo"],
-    username: "abcFulfypaw1231231",
+    label: <button>Cấm hoạt động</button>,
   },
 ];
 export default function AccountManagement_SM() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
+    console.log(poAccounts + "hellooooo");
+
     setIsModalOpen(true);
   };
   const handleOk = () => {
@@ -233,72 +147,35 @@ export default function AccountManagement_SM() {
   const columns = [
     {
       title: "Tên",
-      dataIndex: "name",
-      key: "name",
-      width: "26%",
-      ...getColumnSearchProps("name"),
+      dataIndex: "fullname",
+      key: "fullname",
+      width: "20%",
+      ...getColumnSearchProps("fullname"),
     },
     {
       title: "Tài khoản",
       dataIndex: "username",
       key: "username",
-      width: "20%",
+      width: "18%",
       ...getColumnSearchProps("username"),
     },
     {
-      title: "Ngày tham gia",
-      dataIndex: "startDate",
-      key: "startDate",
-      width: "14%",
+      title: "Số điện thoại",
+      dataIndex: "phone",
+      key: "phone",
+      width: "13%",
 
-      ...getColumnSearchProps("startDate"),
+      ...getColumnSearchProps("phone"),
     },
-
     {
-      title: "Tình trạng",
-      key: "status",
-      dataIndex: "status",
-      width: "12%",
-      render: (_, { status }) => (
-        <>
-          {status.map((tag) => {
-            let color;
-            switch (tag) {
-              case "tốt":
-                color = "blue";
-                break;
-              case "cảnh cáo":
-                color = "orange";
-                break;
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      width: "15%",
 
-              case "vi phạm":
-                color = "red";
-                break;
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-      filters: [
-        {
-          text: "Tốt",
-          value: "tốt",
-        },
-        {
-          text: "Cảnh cáo",
-          value: "cảnh cáo",
-        },
-        {
-          text: "Vi phạm",
-          value: "vi phạm",
-        },
-      ],
-      onFilter: (value, record) => record.status.indexOf(value) === 0,
+      ...getColumnSearchProps("email"),
     },
+
     {
       title: "Thông tin",
       width: 140,
@@ -309,17 +186,89 @@ export default function AccountManagement_SM() {
       ),
     },
     {
-      title: "Gửi cảnh cáo",
-      fixed: "right",
-      width: 120,
-      render: () => <Button>Cảnh cáo</Button>,
+      title: "Tình trạng",
+      key: "reputation",
+      dataIndex: "reputation",
+      width: "12%",
+      render: (reputation) => (
+        <span>
+          <Tag
+            color={
+              reputation === "null"
+                ? "default"
+                : reputation === 2
+                ? "blue"
+                : reputation === 3
+                ? "green"
+                : "default"
+            }
+            key={reputation}
+          >
+            {reputation?.toUpperCase()}
+          </Tag>
+        </span>
+      ),
+      filters: [
+        {
+          text: "Tốt",
+          value: "Good",
+        },
+        {
+          text: "Cảnh cáo",
+          value: "cảnh cáo",
+        },
+        {
+          text: "Vi phạm",
+          value: "vi phạm",
+        },
+      ],
+      onFilter: (value, record) => record.reputation.indexOf(value) === 0,
     },
     {
-      title: "Cấm hoạt động",
-      width: 140,
-      render: () => <Button>Khóa tài khoản</Button>,
+      title: "Hành động",
+      width: "10%",
+      render: () => (
+        <Dropdown
+          menu={{
+            items,
+          }}
+        >
+          <a onClick={(e) => e.preventDefault()}>
+            <AlignLeftOutlined style={{ fontSize: "24px", color: "gray" }} />
+          </a>
+        </Dropdown>
+      ),
     },
   ];
+
+  // GET SM ACCOUNT
+  const [loading, setLoading] = useState(false);
+  const [poAccounts, setPoAccounts] = useState();
+  const handleGetPO = async () => {
+    try {
+      const response = await axios.get(
+        "https://fluffypaw.azurewebsites.net/api/Account/GetStores",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "admin_access_token"
+            )}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setPoAccounts(response.data.data.result);
+        console.log(response.data.data.result);
+      }
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    handleGetPO();
+  }, []);
   return (
     <div>
       <div className="flex flex-row h-screen">
@@ -336,7 +285,7 @@ export default function AccountManagement_SM() {
           >
             <Table
               columns={columns}
-              dataSource={data}
+              dataSource={poAccounts}
               pagination={{ pageSize: 7 }}
             />
           </div>
@@ -344,7 +293,7 @@ export default function AccountManagement_SM() {
       </div>
       {/* MODAL DETAIL PET OWNER */}
       <Modal
-        title="Basic Modal"
+        title="Chi tiết cửa hàng"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}

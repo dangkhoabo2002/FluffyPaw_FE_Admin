@@ -27,6 +27,7 @@ function App() {
 
         <Route path="/po_account" element={<PoAccount />}></Route>
         <Route path="/sm_account" element={<SmAccount />}></Route>
+        <Route path="/waiting_sm_store" element={<SmAccount />}></Route>
 
         {/* SUPPORT TICKET*/}
 
