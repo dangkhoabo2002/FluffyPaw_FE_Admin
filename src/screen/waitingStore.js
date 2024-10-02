@@ -1,34 +1,120 @@
-import React, { useEffect, useRef, useState } from "react";
-import { SearchOutlined, AlignLeftOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Dropdown, Tag } from "antd";
-import axios from "axios";
+import React, { useRef, useState } from "react";
+import { SearchOutlined } from "@ant-design/icons";
+import { Button, Input, Space, Table, Modal, Tag } from "antd";
 import Highlighter from "react-highlight-words";
 
 import SideBar from "../component/sidebar";
 
-const items = [
+const data = [
   {
     key: "1",
-    label: <button>Cảnh cáo</button>,
+    name: "Nguyễn Thị Bích Phượng",
+    age: 32,
+    startDate: "24-07-2024",
+    status: ["tốt"],
+
+    address: "New York No. 1 Lake Park",
+    username: "username123",
   },
   {
     key: "2",
-    label: <button>Cấm hoạt động</button>,
+    name: "Mai Văn Tiến Hoàng Đạt",
+    age: 42,
+    startDate: "24-07-2024",
+    status: ["tốt"],
+
+    address: "London No. 1 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "3",
+    name: "Lê Hiếu Nghĩa Đệ Nhất Thương Tâm Nhàn",
+    age: 32,
+    startDate: "20-04-2024",
+    status: ["tốt"],
+
+    address: "Sydney No. 1 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "4",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "24-03-2024",
+    status: ["tốt"],
+
+    address: "London No. 2 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "5",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "24-01-2024",
+    status: ["tốt"],
+
+    address: "London No. 2 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "6",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "21-02-2024",
+    status: ["vi phạm"],
+
+    address: "London No. 2 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "7",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "04-07-2024",
+    status: ["cảnh cáo"],
+
+    address: "London No. 2 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "8",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "24-07-2023",
+    status: ["cảnh cáo"],
+
+    address: "London No. 2 Lake Park",
+    username: "username123",
+  },
+  {
+    key: "9",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "24-06-2024",
+    status: ["tốt"],
+
+    username: "username123",
+  },
+  {
+    key: "10",
+    name: "Ngô Tiến Đạt",
+    age: 32,
+    startDate: "20-07-2024",
+    status: ["cảnh cáo"],
+    username: "abcFulfypaw1231231",
   },
 ];
-export default function AccountManagement_PO() {
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const showModal = () => {
-  //   console.log(poAccounts + "hellooooo");
-
-  //   setIsModalOpen(true);
-  // };
-  // const handleOk = () => {
-  //   setIsModalOpen(false);
-  // };
-  // const handleCancel = () => {
-  //   setIsModalOpen(false);
-  // };
+export default function AccountManagement_SM() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -147,70 +233,60 @@ export default function AccountManagement_PO() {
   const columns = [
     {
       title: "Tên",
-      dataIndex: "fullname",
-      key: "fullname",
-      width: "20%",
-      ...getColumnSearchProps("fullname"),
+      dataIndex: "name",
+      key: "name",
+      width: "26%",
+      ...getColumnSearchProps("name"),
     },
     {
       title: "Tài khoản",
       dataIndex: "username",
       key: "username",
-      width: "18%",
+      width: "20%",
       ...getColumnSearchProps("username"),
     },
     {
-      title: "Ngày sinh",
-      dataIndex: "dob",
-      key: "dob",
-      width: "10%",
+      title: "Ngày tham gia",
+      dataIndex: "startDate",
+      key: "startDate",
+      width: "14%",
 
-      ...getColumnSearchProps("dob"),
-    },
-    {
-      title: "Số điện thoại",
-      dataIndex: "phone",
-      key: "phone",
-      width: "13%",
-
-      ...getColumnSearchProps("phone"),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: "15%",
-
-      ...getColumnSearchProps("email"),
+      ...getColumnSearchProps("startDate"),
     },
 
     {
       title: "Tình trạng",
-      key: "reputation",
-      dataIndex: "reputation",
+      key: "status",
+      dataIndex: "status",
       width: "12%",
-      render: (reputation) => (
-        <span>
-          <Tag
-            color={
-              reputation === "Good"
-                ? "default"
-                : reputation === 2
-                ? "blue"
-                : reputation === 3
-                ? "green"
-                : "default"
+      render: (_, { status }) => (
+        <>
+          {status.map((tag) => {
+            let color;
+            switch (tag) {
+              case "tốt":
+                color = "blue";
+                break;
+              case "cảnh cáo":
+                color = "orange";
+                break;
+
+              case "vi phạm":
+                color = "red";
+                break;
             }
-            key={reputation}
-          >
-            {reputation.toUpperCase()}
-          </Tag>
-        </span>
+            return (
+              <Tag color={color} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
       ),
       filters: [
         {
           text: "Tốt",
-          value: "Good",
+          value: "tốt",
         },
         {
           text: "Cảnh cáo",
@@ -221,63 +297,29 @@ export default function AccountManagement_PO() {
           value: "vi phạm",
         },
       ],
-      onFilter: (value, record) => record.reputation.indexOf(value) === 0,
+      onFilter: (value, record) => record.status.indexOf(value) === 0,
     },
-    // {
-    //   title: "Thông tin",
-    //   width: 140,
-    //   render: () => (
-    //     <Button type="primary" onClick={showModal}>
-    //       Chi tiết
-    //     </Button>
-    //   ),
-    // },
-
     {
-      title: "Hành động",
-      width: "10%",
+      title: "Thông tin",
+      width: 140,
       render: () => (
-        <Dropdown
-          menu={{
-            items,
-          }}
-        >
-          <a onClick={(e) => e.preventDefault()}>
-            <AlignLeftOutlined style={{ fontSize: "24px", color: "gray" }} />
-          </a>
-        </Dropdown>
+        <Button type="primary" onClick={showModal}>
+          Chi tiết
+        </Button>
       ),
     },
+    {
+      title: "Gửi cảnh cáo",
+      fixed: "right",
+      width: 120,
+      render: () => <Button>Cảnh cáo</Button>,
+    },
+    {
+      title: "Cấm hoạt động",
+      width: 140,
+      render: () => <Button>Khóa tài khoản</Button>,
+    },
   ];
-
-  // GET SM ACCOUNT
-  const [loading, setLoading] = useState(false);
-  const [poAccounts, setPoAccounts] = useState();
-  const handleGetPO = async () => {
-    try {
-      const response = await axios.get(
-        "https://fluffypaw.azurewebsites.net/api/Account/GetPetOwners",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              "admin_access_token"
-            )}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        setPoAccounts(response.data.data.result);
-        console.log(response.data.data.result);
-      }
-    } catch (err) {
-      console.log(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    handleGetPO();
-  }, []);
   return (
     <div>
       <div className="flex flex-row h-screen">
@@ -294,14 +336,14 @@ export default function AccountManagement_PO() {
           >
             <Table
               columns={columns}
-              dataSource={poAccounts}
+              dataSource={data}
               pagination={{ pageSize: 7 }}
             />
           </div>
         </div>
       </div>
       {/* MODAL DETAIL PET OWNER */}
-      {/* <Modal
+      <Modal
         title="Basic Modal"
         open={isModalOpen}
         onOk={handleOk}
@@ -310,7 +352,7 @@ export default function AccountManagement_PO() {
         <p>Some contents...</p>
         <p>Some contents...</p>
         <p>Some contents...</p>
-      </Modal> */}
+      </Modal>
     </div>
   );
 }

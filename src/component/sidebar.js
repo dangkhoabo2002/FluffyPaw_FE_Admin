@@ -29,6 +29,10 @@ const items = [
         key: "2",
         label: "Cửa hàng",
       },
+      {
+        key: "sub2_1",
+        label: "Cửa hàng đang chờ",
+      },
     ],
   },
   {
@@ -117,6 +121,10 @@ const SideBar = () => {
         break;
       case "8":
         navigate("/wd_request");
+        break;
+      case "sub2_1":
+        navigate("/wd_request");
+
         break;
     }
   };
