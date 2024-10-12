@@ -3,8 +3,6 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table, Modal, Tag } from "antd";
 import Highlighter from "react-highlight-words";
 
-import SideBar from "../component/sidebar";
-
 const data = [
   {
     key: "1",
@@ -322,24 +320,19 @@ export default function AccountManagement_SM() {
   ];
   return (
     <div>
-      <div className="flex flex-row h-screen">
-        <div className="flex flex-col gap-4 fixed top-0 left-0 bottom-0 w-92">
-          <SideBar />
-        </div>
-        <div className="py-12 pr-12 flex flex-col gap-10 bg-[#f1f5f9] w-full pl-[356px]">
-          <div
-            className="flex flex-col bg-white h-screen"
-            style={{
-              border: "1px solid rgb(226, 232, 240)",
-              boxShadow: "0px 8px 13px -3px rgba(0, 0, 0, .07)",
-            }}
-          >
-            <Table
-              columns={columns}
-              dataSource={data}
-              pagination={{ pageSize: 7 }}
-            />
-          </div>
+      <div className="py-12 pr-12 flex flex-col gap-10 bg-[#f1f5f9] w-full ">
+        <div
+          className="flex flex-col bg-white h-screen"
+          style={{
+            border: "1px solid rgb(226, 232, 240)",
+            boxShadow: "0px 8px 13px -3px rgba(0, 0, 0, .07)",
+          }}
+        >
+          <Table
+            columns={columns}
+            dataSource={data}
+            pagination={{ pageSize: 7 }}
+          />
         </div>
       </div>
       {/* MODAL DETAIL PET OWNER */}

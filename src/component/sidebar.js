@@ -5,6 +5,7 @@ import {
   TagOutlined,
   BarChartOutlined,
   DollarOutlined,
+  ContainerOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import Logo from "../logo.png";
@@ -18,7 +19,7 @@ const items = [
   },
   {
     key: "sub2",
-    label: "Tài khoản",
+    label: "Quản lí",
     icon: <UserOutlined />,
     children: [
       {
@@ -31,18 +32,33 @@ const items = [
       },
       {
         key: "sub2_1",
-        label: "Cửa hàng đang chờ",
+        label: "Thương hiệu",
       },
     ],
   },
   {
     key: "sub3",
-    label: "Hỗ trợ",
-    icon: <BarChartOutlined />,
+    label: "Chờ xử lí",
+    icon: <ContainerOutlined />,
+    children: [
+      {
+        key: "sub3_1",
+        label: "Thương hiệu chờ duyệt",
+      },
+      {
+        key: "sub3_2",
+        label: "Cửa hàng chờ duyệt",
+      },
+    ],
   },
+  // {
+  //   key: "sub3",
+  //   label: "Hỗ trợ",
+  //   icon: <BarChartOutlined />,
+  // },
   {
     key: "sub4",
-    label: "Phân loại",
+    label: "Hệ thống",
     icon: <TagOutlined />,
     children: [
       {
@@ -93,38 +109,40 @@ const SideBar = () => {
     setCurrent(e.key);
     switch (e.key) {
       case "sub1":
-        navigate("/dashboard");
+        navigate("/admin/dashboard");
         break;
       case "1":
-        navigate("/po_account");
+        navigate("/admin/po_account");
         break;
       case "2":
-        navigate("/sm_account");
+        navigate("/admin/sm_account");
         break;
       case "sub3":
-        navigate("/support");
+        navigate("/admin/support");
         break;
       case "3":
-        navigate("/list_category");
+        navigate("/admin/list_category");
         break;
       case "4":
-        navigate("/add_category");
+        navigate("/admin/add_category");
         break;
       case "5":
-        navigate("/wd_history");
+        navigate("/admin/wd_history");
         break;
       case "6":
-        navigate("/rc_history");
+        navigate("/admin/rc_history");
         break;
       case "7":
-        navigate("/rp_history");
+        navigate("/admin/rp_history");
         break;
       case "8":
-        navigate("/wd_request");
+        navigate("/admin/wd_request");
         break;
       case "sub2_1":
-        navigate("/wd_request");
-
+        navigate("/admin/store_waiting");
+        break;
+      case "sub3_1":
+        navigate("/admin/waiting_sm_brand");
         break;
     }
   };

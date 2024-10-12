@@ -13,6 +13,8 @@ import WithdrawHistory from "./screen/withdrawHistory";
 import RechargeHistory from "./screen/rechargeHistory";
 import ReportHistory from "./screen/reportHistory";
 import OthersHistory from "./screen/othersHistory";
+import MainPage from "./screen/mainpage";
+import BrandWaitList from "./screen/waitingBrand";
 function App() {
   return (
     <div className="App">
@@ -20,33 +22,36 @@ function App() {
       <Routes>
         {/* DASHBOARD*/}
         <Route path="/" element={<Login />}></Route>
-        <Route path="/dashboard" element={<Dashboard />}></Route>
-        <Route path="/login" element={<Login />}></Route>
+        <Route path="/admin" element={<MainPage />}>
+          <Route path="/admin/dashboard" element={<Dashboard />}></Route>
+          <Route path="/admin/login" element={<Login />}></Route>
 
-        {/* ACOUNT MANAGEMENT*/}
+          {/* ACOUNT MANAGEMENT*/}
 
-        <Route path="/po_account" element={<PoAccount />}></Route>
-        <Route path="/sm_account" element={<SmAccount />}></Route>
-        <Route path="/waiting_sm_store" element={<SmAccount />}></Route>
+          <Route path="/admin/po_account" element={<PoAccount />}></Route>
+          <Route path="/admin/sm_account" element={<SmAccount />}></Route>
+          <Route path="/admin/waiting_sm_store" element={<SmAccount />}></Route>
+          <Route path="/admin/waiting_sm_brand" element={<BrandWaitList />}></Route>
 
-        {/* SUPPORT TICKET*/}
+          {/* SUPPORT TICKET*/}
 
-        <Route path="/support" element={<Support />}></Route>
+          <Route path="/admin/support" element={<Support />}></Route>
 
-        {/* CATEGORY MANAGEMENT*/}
+          {/* CATEGORY MANAGEMENT*/}
 
-        <Route path="/list_category" element={<ListCate />}></Route>
-        <Route path="/add_category" element={<AddCate />}></Route>
+          <Route path="/admin/list_category" element={<ListCate />}></Route>
+          <Route path="/admin/add_category" element={<AddCate />}></Route>
 
-        {/* HISTORY */}
-        <Route path="/wd_history" element={<WithdrawHistory />}></Route>
-        <Route path="/rc_history" element={<RechargeHistory />}></Route>
-        <Route path="/rp_history" element={<ReportHistory />}></Route>
-        <Route path="/ot_history" element={<OthersHistory />}></Route>
+          {/* HISTORY */}
+          <Route path="/admin/wd_history" element={<WithdrawHistory />}></Route>
+          <Route path="/admin/rc_history" element={<RechargeHistory />}></Route>
+          <Route path="/admin/rp_history" element={<ReportHistory />}></Route>
+          <Route path="/admin/ot_history" element={<OthersHistory />}></Route>
 
-        {/* Pet Owner */}
+          {/* Pet Owner */}
 
-        {/* Test */}
+          {/* Test */}
+        </Route>
       </Routes>
     </div>
   );

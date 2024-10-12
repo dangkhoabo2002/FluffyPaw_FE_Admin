@@ -57,7 +57,7 @@ export default function Login() {
       setIsLoading(false);
     } else {
       axios
-        .post("https://fluffypaw.azurewebsites.net/api/Authentication/Login", {
+        .post("https://fluffypaw.azurewebsites.net/api/Admin/AdminLogin", {
           username: us,
           password: pw,
         })
@@ -67,7 +67,7 @@ export default function Login() {
             console.log(dataLog.data);
             localStorage.setItem("admin_access_token", dataLog.data);
             sessionStorage.setItem("admin_access_token", dataLog.data);
-            navigate("/dashboard");
+            navigate("/admin/dashboard");
             setIsLoading(false);
           }
         })

@@ -1,34 +1,50 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined, AlignLeftOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Dropdown, Tag } from "antd";
+import {
+  Button,
+  Input,
+  Space,
+  Table,
+  Dropdown,
+  Tag,
+  notification,
+  Spin,
+  Modal,
+} from "antd";
 import axios from "axios";
 import Highlighter from "react-highlight-words";
 
-import SideBar from "../component/sidebar";
-
-const items = [
-  {
-    key: "1",
-    label: <button>Cảnh cáo</button>,
-  },
-  {
-    key: "2",
-    label: <button>Cấm hoạt động</button>,
-  },
-];
 export default function AccountManagement_PO() {
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const showModal = () => {
-  //   console.log(poAccounts + "hellooooo");
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type) => {
+    if (type === "warning") {
+      api.warning({
+        message: "Thông tin này không thể trống !",
+        description: "Vui lòng nhập đầy đủ thông tin của bạn để tiếp tục.",
+        placement: "bottomRight",
+      });
+    } else if (type === "unvalid_email") {
+      api.warning({
+        message: "Sai định dạng mail !",
+        description: "Vui lòng nhập đúng email của bạn.",
+        placement: "bottomRight",
+      });
+    } else if (type === "unvalid_phone") {
+      api.warning({
+        message: "Sai định dạng số điện thoại !",
+        description: "Vui lòng nhập đúng số điện thoại của bạn.",
+        placement: "bottomRight",
+      });
+    } else if (type === "success_warning") {
+      api.success({
+        message: "Cảnh cáo tài khoản thành công.",
+        description: "Tài khoản đã bị hạ bậc, vui lòng chờ trong giây lát.",
+        placement: "bottomRight",
+      });
+    }
+  };
 
-  //   setIsModalOpen(true);
-  // };
-  // const handleOk = () => {
-  //   setIsModalOpen(false);
-  // };
-  // const handleCancel = () => {
-  //   setIsModalOpen(false);
-  // };
+  const [loading, setLoading] = useState(false);
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -193,32 +209,36 @@ export default function AccountManagement_PO() {
         <span>
           <Tag
             color={
-              reputation === "Good"
-                ? "default"
-                : reputation === 2
-                ? "blue"
-                : reputation === 3
-                ? "green"
-                : "default"
+              reputation === "Tốt"
+                ? "green-inverse"
+                : reputation === "Cảnh cáo"
+                ? "blue-inverse"
+                : reputation === "Vi phạm"
+                ? "orange-inverse"
+                : "red-inverse"
             }
             key={reputation}
           >
-            {reputation.toUpperCase()}
+            {reputation}
           </Tag>
         </span>
       ),
       filters: [
         {
           text: "Tốt",
-          value: "Good",
+          value: "Tốt",
         },
         {
           text: "Cảnh cáo",
-          value: "cảnh cáo",
+          value: "Cảnh cáo",
         },
         {
           text: "Vi phạm",
-          value: "vi phạm",
+          value: "Vi phạm",
+        },
+        {
+          text: "Nghiêm cấm",
+          value: "Nghiêm cấm",
         },
       ],
       onFilter: (value, record) => record.reputation.indexOf(value) === 0,
@@ -236,24 +256,62 @@ export default function AccountManagement_PO() {
     {
       title: "Hành động",
       width: "10%",
-      render: () => (
-        <Dropdown
-          menu={{
-            items,
-          }}
-        >
-          <a onClick={(e) => e.preventDefault()}>
-            <AlignLeftOutlined style={{ fontSize: "24px", color: "gray" }} />
-          </a>
-        </Dropdown>
-      ),
+      render: (text, record) => {
+        const menuItems = [
+          {
+            label: "Cảnh cáo",
+            key: "1",
+            onClick: () =>
+              showModal("warning", record?.accountId, record?.fullname),
+          },
+          {
+            label: "Cấm hoạt động",
+            key: "2",
+            onClick: () =>
+              showModal("warning", record?.accountId, record?.fullname),
+          },
+        ];
+
+        return (
+          <Dropdown
+            menu={{
+              items: menuItems, // Menu items với sự kiện onClick
+            }}
+          >
+            <a onClick={(e) => e.preventDefault()}>
+              <AlignLeftOutlined style={{ fontSize: "24px", color: "gray" }} />
+            </a>
+          </Dropdown>
+        );
+      },
     },
   ];
 
-  // GET SM ACCOUNT
-  const [loading, setLoading] = useState(false);
+  const [isModalOpenWarning, setIsModalOpenWarning] = useState(false);
+  const [isModalOpenBan, setIsModalOpenBan] = useState(false);
+  const [idPo, setIdPo] = useState(0);
+  const [namePo, setNamePo] = useState();
+
+  const showModal = (input, record, namePo) => {
+    setIdPo(record);
+    setNamePo(namePo);
+    if (input === "warning") {
+      setIsModalOpenWarning(true);
+    } else if (input === "warning") setIsModalOpenBan(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpenWarning(false);
+    setIsModalOpenBan(false);
+    setIdPo(0);
+  };
+  // GET PO ACCOUNT
   const [poAccounts, setPoAccounts] = useState();
+  const [loadingGet, setLoadingGet] = useState(false);
+
   const handleGetPO = async () => {
+    showLoader();
+    setLoadingGet(true);
     try {
       const response = await axios.get(
         "https://fluffypaw.azurewebsites.net/api/Account/GetPetOwners",
@@ -266,51 +324,139 @@ export default function AccountManagement_PO() {
         }
       );
       if (response.status === 200) {
-        setPoAccounts(response.data.data.result);
-        console.log(response.data.data.result);
+        const formatDate = (isoDate) => {
+          const date = new Date(isoDate);
+          const day = String(date.getDate()).padStart(2, "0");
+          const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+          const year = date.getFullYear();
+          return `${day}-${month}-${year}`;
+        };
+
+        const formattedData = response.data.data?.map((item) => ({
+          ...item,
+          dob: formatDate(item.dob),
+          reputation:
+            item.reputation === "Good"
+              ? "Tốt"
+              : item.reputation === "Warning"
+              ? "Cảnh cáo"
+              : item.reputation === "Bad"
+              ? "Tệ"
+              : "Nghiêm cấm",
+        }));
+        setPoAccounts(formattedData);
       }
     } catch (err) {
       console.log(err.message);
     } finally {
+      setLoadingGet(false);
+    }
+  };
+
+  // DOWNGRADE PO ACCOUNT
+  const handleWarningPO = async (PoId) => {
+    try {
+      const response = await axios.patch(
+        `https://fluffypaw.azurewebsites.net/api/Admin/DowngradeReputation/${PoId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "admin_access_token"
+            )}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        handleGetPO();
+        openNotificationWithIcon("success_warning");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
       setLoading(false);
     }
+  };
+
+  // LOADING
+  const [spinning, setSpinning] = React.useState(false);
+  const [percent, setPercent] = React.useState(0);
+  const showLoader = () => {
+    setSpinning(true);
+    let ptg = -10;
+    const interval = setInterval(() => {
+      ptg += 5;
+      setPercent(ptg);
+      if (ptg > 120) {
+        clearInterval(interval);
+        setSpinning(false);
+        setPercent(0);
+      }
+    }, 100);
   };
   useEffect(() => {
     handleGetPO();
   }, []);
   return (
     <div>
-      <div className="flex flex-row h-screen">
-        <div className="flex flex-col gap-4 fixed top-0 left-0 bottom-0 w-92">
-          <SideBar />
-        </div>
-        <div className="py-12 pr-12 flex flex-col gap-10 bg-[#f1f5f9] w-full pl-[356px]">
-          <div
-            className="flex flex-col bg-white h-screen"
-            style={{
-              border: "1px solid rgb(226, 232, 240)",
-              boxShadow: "0px 8px 13px -3px rgba(0, 0, 0, .07)",
-            }}
-          >
-            <Table
-              columns={columns}
-              dataSource={poAccounts}
-              pagination={{ pageSize: 7 }}
-            />
-          </div>
+      {contextHolder}
+      <div className=" pr-12 flex flex-col gap-10 bg-[#f1f5f9] w-full">
+        {loadingGet && (
+          <Spin spinning={spinning} percent={percent} fullscreen />
+        )}
+
+        <div
+          className="flex flex-col bg-white h-screen"
+          style={{
+            border: "1px solid rgb(226, 232, 240)",
+            boxShadow: "0px 8px 13px -3px rgba(0, 0, 0, .07)",
+          }}
+        >
+          <Table
+            columns={columns}
+            dataSource={poAccounts}
+            pagination={{ pageSize: 7 }}
+            rowKey="id"
+          />
         </div>
       </div>
-      {/* MODAL DETAIL PET OWNER */}
-      {/* <Modal
+      {/* MODAL WARNINg PET OWNER */}
+      <Modal open={isModalOpenWarning} onCancel={handleCancel}>
+        <h1 className="text-[20px]">Cảnh cáo tài khoản {namePo}</h1>
+        <p>* Lưu ý:</p>
+        <p>
+          - Mọi hành động của bạn sẽ KHÔNG THỂ HOÀN TÁC và bạn sẽ phải CHỊU
+          TRÁCH NHIỆM nếu xảy ra xự cố hoặc nhầm lẫn.
+        </p>
+      </Modal>
+
+      {/* MODAL BAN PET OWNER */}
+      <Modal
         title="Basic Modal"
-        open={isModalOpen}
-        onOk={handleOk}
+        open={isModalOpenWarning}
         onCancel={handleCancel}
+        footer={[
+          <>
+            <Button>Hủy bỏ</Button>
+            <Button onClick={handleWarningPO(idPo)}>
+              Tôi sẵn sàng chịu trách nhiệm !
+            </Button>
+          </>,
+        ]}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-      </Modal> */}
+        <h1 className="text-[20px]">
+          Cấm tài khoản {namePo} hoạt động trên Fluffy Paw{" "}
+        </h1>
+        <p>* Lưu ý:</p>
+        <p>
+          - Mọi hành động của bạn sẽ KHÔNG THỂ HOÀN TÁC và bạn sẽ phải CHỊU
+          TRÁCH NHIỆM nếu xảy ra xự cố hoặc nhầm lẫn.
+        </p>
+        <p>
+          - Hành động này sẽ khiến tài khoản {namePo} thực thi bất kì hành động
+          trên hệ thống, bạn chắc chắn chứ ?
+        </p>
+      </Modal>
     </div>
   );
 }
